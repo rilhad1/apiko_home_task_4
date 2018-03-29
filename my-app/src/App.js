@@ -4,33 +4,42 @@ import data from './data.js';
 import PostList from './Component/PostList.js';
 import SearchBar from './Component/SearchBar.js';
 import MoreButton from './Component/MoreButton.js';
+
 import './App.css';
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            num: 10,
+            lim: 10,
             searchText: ""
         };
         this.add = this.add.bind(this);
         this.remove = this.remove.bind(this);
+        this.filterData = this.filterData.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
     add = () => {
-        const { num } = this.state;
+        const { lim } = this.state;
         this.setState({
-            num: num < data.length ? num + 10 : data.length
+            lim: lim < this.filterData().length ? lim + 10 : lim
         });
     };
     remove = () => {
-        const { num } = this.state;
+        const { lim } = this.state;
         this.setState({
-            num: num > 10 ? num - 10 : 10
+            lim: lim > 10 ? lim - 10 : 10
         });
 
     };
+    filterData = () => {
+        return data.filter((item) => {
+            return item.title.toLowerCase()
+            .search(this.state.searchText.toLowerCase()) > -1;
+        });
+    }
     handleChange = (event) => {
+        console.log()
         const { value } = event.target;
         this.setState({
             searchText: value 
@@ -45,9 +54,11 @@ class App extends React.Component {
                     onChange={this.handleChange} 
                     text={this.state.searchText} 
                 />
+                
                 <PostList 
-                    count={this.state.num} 
+                    lim={this.state.lim} 
                     search={this.state.searchText}
+                    filterData={this.filterData()}
                 />
                  <div className="but">
                     <MoreButton onClick={this.add} content="More" />
